@@ -1,0 +1,4 @@
+Flask==2.0.1
+flask-socketio==5.0.1
+rclpy==2.0.0
+geometry_msgs==2.0.0

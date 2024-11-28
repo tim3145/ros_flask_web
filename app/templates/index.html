@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robot Control</title>
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <style>
+        #map { height: 500px; width: 100%; }
+    </style>
+    <script>
+        var socket = io.connect('http://localhost:5000');
+
+        // 맵 초기화
+        var map = L.map('map').setView([0, 0], 18);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+        var robotMarker = L.marker([0, 0]).addTo(map);  // 로봇 위치를 표시할 마커
+
+        // 로봇 위치 업데이트
+        socket.on('robot_position', function(data) {
+            robotMarker.setLatLng([data.y, data.x]);
+        });
+
+        // 클릭한 위치로 로봇을 이동
+        map.on('click', function(e) {
+            var lat = e.latlng.lat;
+            var lng = e.latlng.lng;
+            socket.emit('move_robot', { x: lng, y: lat });
+        });
+    </script>
+</head>
+<body>
+    <h1>Control Robot</h1>
+    <div id="map"></div>
+</body>
+</html>
